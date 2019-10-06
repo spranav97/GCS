@@ -9,7 +9,7 @@ try:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.JOYAXISMOTION:
-                print(event.dict, event.axis)
+                print(event.dict, int(event.value*1000))
             elif event.type == pygame.JOYBALLMOTION:
                 print(event.dict, event.ball)
             elif event.type == pygame.JOYBUTTONDOWN:
