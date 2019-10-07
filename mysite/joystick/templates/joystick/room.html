@@ -11,31 +11,24 @@
     <body>
         <div id="gamepadPrompt"></div>
         <div id="gamepadDisplay"></div>
+        <div id="hello"></div>
         <script>
             var hasGP=false;
             var repGP;
             var chatSocket=new WebSocket('ws://' + window.location.host + '/ws/joy/');
-            chatSocket.onmessage=function(e) {
-                var data=JSON.parse(e.data);
-                var message=data['message'];
-                $("#gamepadDisplay").html(yytt);
-            };
             function canGame() {
                 return "getGamepads" in navigator;
             }
             function reportOnGamepad() {
                 var gp=navigator.getGamepads()[0];
-                var yytt="";
-                    yytt += "id: "+gp.id+"<br/>";
+                var yytt = "id: "+gp.id+"<br/>";
                 for(var i=0;i<gp.buttons.length;i++) {
                     yytt+= "Button "+(i+1)+": ";
-                    if(gp.buttons[i].pressed) yytt+= " pressed";
-                    yytt+= "<br/>";
+                    if(gp.buttons[i].pressed) yytt+= " pressed<br/>";
                 }
-                for(var i=0;i<gp.axes.length; i++) {
-                    yytt+= "Stick "+(Math.ceil(i/2)+1)+":\t"+gp.axes[i]+"<br/>";
+                for(i=0;i<gp.axes.length; i++) {
+                    yytt+= "Stick "+(i)+":\t"+Math.ceil((gp.axes[i]/2+1.5)*1000)+"<br/>";
                 }
-                //$("#gamepadDisplay").html(yytt);
                 chatSocket.send(JSON.stringify(
                     {
                     'message': yytt
@@ -43,27 +36,29 @@
                 ));
             }
             $(document).ready(function() {
-                if(canGame()) {
-                    var prompt="To begin using your gamepad, connect it and press any button!";
+                if(canGame()){
+                    var prompt="Gamepad not connected to this computer";
                     $("#gamepadPrompt").text(prompt);
                     $(window).on("gamepadconnected", function() {
                         hasGP=true;
                         $("#gamepadPrompt").html("Gamepad connected!");
-                        console.log("connection event");
-                        repGP=window.setInterval(reportOnGamepad,100);
+                        repGP=window.setInterval(reportOnGamepad,50);
                     });
                     $(window).on("gamepaddisconnected", function() {
-                        console.log("disconnection event");
                         $("#gamepadPrompt").text(prompt);
                         window.clearInterval(repGP);
                     });
                     var checkGP=window.setInterval(function() {
-                        console.log('checkGP');
                         if(navigator.getGamepads()[0]) {
                             if(!hasGP) $(window).trigger("gamepadconnected");
                             window.clearInterval(checkGP);
                         }
                     }, 100);
+                }
+                chatSocket.onmessage=function(e) {
+                    var data=JSON.parse(e.data);
+                    var yytt=data['message'];
+                $("#gamepadDisplay").html(yytt);
                 }
             });
         </script>
