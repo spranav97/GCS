@@ -24,7 +24,8 @@
                 var yytt = "id: "+gp.id+"<br/>";
                 for(var i=0;i<gp.buttons.length;i++) {
                     yytt+= "Button "+(i+1)+": ";
-                    if(gp.buttons[i].pressed) yytt+= " pressed<br/>";
+                    if(gp.buttons[i].pressed) yytt+= " pressed";
+                    yytt+="<br/>"
                 }
                 for(i=0;i<gp.axes.length; i++) {
                     yytt+= "Stick "+(i)+":\t"+Math.ceil((gp.axes[i]/2+1.5)*1000)+"<br/>";

@@ -9,7 +9,7 @@ application = ProtocolTypeRouter({
             chat.routing.websocket_urlpatterns
         )
     ),
-    'websocket': AuthMiddlewareStack(
+    'websocket2': AuthMiddlewareStack(
         URLRouter(
             joystick.routing.websocket_urlpatterns
         )
