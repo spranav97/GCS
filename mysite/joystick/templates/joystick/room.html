@@ -21,20 +21,24 @@
             }
             function reportOnGamepad() {
                 var gp=navigator.getGamepads()[0];
-                var yytt = "id: "+gp.id+"<br/>";
-                for(var i=0;i<gp.buttons.length;i++) {
-                    yytt+= "Button "+(i+1)+": ";
-                    if(gp.buttons[i].pressed) yytt+= " pressed";
-                    yytt+="<br/>"
+                var yytt = {};
+                yytt['id'] = gp.id;
+                /*
+                if(gp.buttons[0].pressed) yytt['b'] = 1;
+                else yytt['b'] = 0;
+                yytt['s']= Math.ceil((gp.axes[0]/2+1.5)*1000);
+                */
+                var b=[];
+                for(var i=0;i<gp.buttons.length;i++){
+                    b.push(gp.buttons[i].pressed);
                 }
-                for(i=0;i<gp.axes.length; i++) {
-                    yytt+= "Stick "+(i)+":\t"+Math.ceil((gp.axes[i]/2+1.5)*1000)+"<br/>";
+                yytt['b']=b;
+                var a=[];
+                for(var i=0;i<gp.axes.length;i++){
+                    a.push(Math.ceil((gp.axes[i]/2+1.5)*1000));
                 }
-                chatSocket.send(JSON.stringify(
-                    {
-                    'message': yytt
-                    }
-                ));
+                yytt['a']=a;
+                chatSocket.send(JSON.stringify(yytt));
             }
             $(document).ready(function() {
                 if(canGame()){
@@ -58,8 +62,7 @@
                 }
                 chatSocket.onmessage=function(e) {
                     var data=JSON.parse(e.data);
-                    var yytt=data['message'];
-                $("#gamepadDisplay").html(yytt);
+                    $("#gamepadDisplay").text(data['r']+"\t"+data['b']);
                 }
             });
         </script>
