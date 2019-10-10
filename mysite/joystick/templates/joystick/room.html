@@ -62,7 +62,7 @@
                 }
                 chatSocket.onmessage=function(e) {
                     var data=JSON.parse(e.data);
-                    $("#gamepadDisplay").text(data['r']+"\t"+data['b']);
+                    $("#gamepadDisplay").html(data['a']+"<br>"+data['b']);
                 }
             });
         </script>

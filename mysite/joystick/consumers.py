@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 
-class ChatConsumer(AsyncWebsocketConsumer):
+class JoyConsumers(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_group_name = 'joy'
 
@@ -27,7 +27,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
-            flight_data
+            text_data_json
         )
 
     # Receive message from room group

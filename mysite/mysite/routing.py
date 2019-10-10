@@ -1,13 +1,15 @@
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
-import chat.routing,joystick.routing
+from chat.consumers import ChatConsumer
+from joystick.consumers import JoyConsumers
+from django.urls import re_path
 
 application = ProtocolTypeRouter({
     'websocket': AuthMiddlewareStack(
-        URLRouter(
-            #chat.routing.websocket_urlpatterns
-            joystick.routing.websocket_urlpatterns
-        )
+        URLRouter([
+            re_path(r'ws/chat/(?P<room_name>\w+)/$', ChatConsumer),
+            re_path(r'ws/joy/$', JoyConsumers),
+        ])
 
     )
 })
