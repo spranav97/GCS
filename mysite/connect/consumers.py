@@ -23,24 +23,23 @@ class ConnectConsumers(AsyncWebsocketConsumer):
     # Receive message from WebSocket
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        text_data_json['type']='chat_message'
         if text_data_json['COM']!='1':
             self.v=connect(text_data_json['COM'])
-
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            text_data_json
-        )
-
-    # Receive message from room group
-    async def chat_message(self, event):
         try:
             data1={
+                'type':'chat_message',
                 'roll':self.v.attitude.roll,
                 'pitch':self.v.attitude.pitch,
                 'yaw':self.v.attitude.yaw,
             }
-            # Send message to WebSocket
-            await self.send(text_data=json.dumps(data1))
+            # Send message to room group
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                data1
+            )
         except:pass
+
+    # Receive message from room group
+    async def chat_message(self, event):
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps(event))
