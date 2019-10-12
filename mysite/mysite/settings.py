@@ -13,9 +13,10 @@ ALLOWED_HOSTS = [
 ]
 
 INSTALLED_APPS = [
-    'channels',
-    'joystick',
     'chat',
+    'channels',
+    'connect',
+    'joystick',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Connect</title>
+    <link rel="stylesheet" href="static/connect/bootstrap.min_mod.css" type="text/css" />
+</head>
+<body>
+    <img id="Horizon" src="static/connect/Horizon.png" height="150%" style="position: absolute;"> 
+    <div style="height: 100%;">
+        <img src="static/connect/HUD.png" height="100%" style="position: relative; float: left;">
+        <input id="chat-message-input" type="text" size="100" style="position: relative;" /><br/>
+        <input id="chat-message-submit" type="button" value="Send" style="position: relative;"/>
+        <input id="sync" type="button" value="sync" style="position: relative;"/>
+    </div>
+
+</body>
+<script>
+    var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/');
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['roll'];
+        var elem=document.getElementById("Horizon");
+        elem.style.transform='translate(16.75%,-16.75%) rotate('+(message/4)*225+'deg)'
+    };
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({'COM': message}));
+        messageInputDom.value = '';
+    };
+    document.querySelector('#sync').onclick = setInterval(function(e) {
+        chatSocket.send(JSON.stringify({'COM': '1'}));
+    },33);
+</script>
+</html>
