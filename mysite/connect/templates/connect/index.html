@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="static/connect/bootstrap.min_mod.css" type="text/css" />
 </head>
 <body>
-    <img id="Horizon" src="static/connect/Horizon.png" height="150%" style="position: absolute;"> 
+    <img id="Horizon" src="static/connect/Horizon.png" height="150%" style="position: absolute; transform: translate(16.75%,-16.75%)"> 
     <div style="height: 100%;">
         <img src="static/connect/HUD.png" height="100%" style="position: relative; float: left;">
         <input id="chat-message-input" type="text" size="50" style="position: relative; float: right;"/><br/>
@@ -19,12 +19,14 @@
     var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/');
     chatSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
-        var message = data['roll'];
+        var roll = data['roll'];
+        var pitch = data['pitch'];
         var elem=document.getElementById("Horizon");
-        elem.style.transform='translate(16.75%,-16.75%) rotate('+(message/4)*225+'deg)'
+        elem.style.transform='translate(16.75%,-16.75%) rotate('+(roll/4)*225+'deg) translateY('+(pitch/32)*750+'%)';
     };
     chatSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
+        //put in bootstrap notification 
     };
     document.querySelector('#chat-message-input').focus();
     document.querySelector('#chat-message-input').onkeyup = function(e) {
@@ -37,6 +39,7 @@
         var message = messageInputDom.value;
         chatSocket.send(JSON.stringify({'COM': message}));
         messageInputDom.value = '';
+        document.querySelector('#sync').click();
     };
     document.querySelector('#sync').onclick = setInterval(function(e) {
         chatSocket.send(JSON.stringify({'COM': '1'}));
