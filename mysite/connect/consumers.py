@@ -19,6 +19,11 @@ class ConnectConsumers(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        try:
+            self.v.close()
+            print('Flight Controller Connection Terminated')
+            #send message to all other users that FC is disconnected
+        except:pass
 
     # Receive message from WebSocket
     async def receive(self, text_data):
